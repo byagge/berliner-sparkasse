@@ -1,0 +1,14 @@
+{
+  "name": "berliner-sparkasse-mirror",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "mirror": "node server.mjs",
+    "start": "node server.mjs",
+    "dev": "node server.mjs"
+  },
+  "dependencies": {
+    "undici": "^7.8.0",
+    "ws": "^8.18.0"
+  }
+}
