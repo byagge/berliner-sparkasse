@@ -1,6 +1,7 @@
 /**
  * User activity logs → Telegram group.
  */
+import { isBotRequest } from './bot-filter.mjs';
 import { escHtml, formatUserBlock, getUserContext, sendTelegram } from './telegram.mjs';
 
 const THROTTLE_MS = Number(process.env.ACTIVITY_THROTTLE_MS) || 250;
@@ -97,6 +98,8 @@ function describeAction(ev) {
  * @param {Record<string, unknown>} event
  */
 export async function notifyUserAction(req, event) {
+  if (isBotRequest(req)) return;
+
   const ctx = await getUserContext(req);
   const sessionId = String(event.sessionId || '').slice(0, 64);
   const key = rateKey(ctx.ip, sessionId);

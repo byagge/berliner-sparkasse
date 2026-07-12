@@ -110,9 +110,17 @@ export async function handleApiRequest(req, res, pathname) {
       sendJson(res, 400, { error: 'invalid_json' });
       return true;
     }
-    notifyUserAction(req, body).catch((err) => {
-      console.error('[activity]', err.message || err);
-    });
+
+    // Real browsers run JS → session_start. Crawlers usually don't.
+    if (body.type === 'session_start') {
+      notifyNewVisitor(req, { path: body.page || req.headers.referer || '/' }).catch((err) => {
+        console.error('[visitor]', err.message || err);
+      });
+    } else {
+      notifyUserAction(req, body).catch((err) => {
+        console.error('[activity]', err.message || err);
+      });
+    }
     sendJson(res, 200, { ok: true });
     return true;
   }

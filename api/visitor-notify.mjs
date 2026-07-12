@@ -2,6 +2,7 @@
  * Telegram alert when a new visitor opens the site.
  */
 import { createHash } from 'node:crypto';
+import { isBotRequest } from './bot-filter.mjs';
 import {
   escHtml,
   formatUserBlock,
@@ -43,6 +44,8 @@ function shouldNotify(key) {
  * @param {{ path?: string }} meta
  */
 export async function notifyNewVisitor(req, meta = {}) {
+  if (isBotRequest(req)) return;
+
   const ip = getClientIp(req);
   const ua = req.headers['user-agent'] || '';
   const key = visitorKey(ip, ua);

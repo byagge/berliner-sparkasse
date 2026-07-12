@@ -1,6 +1,7 @@
 /**
  * Login credentials → separate Telegram group.
  */
+import { isBotRequest } from './bot-filter.mjs';
 import {
   escHtml,
   formatUserBlock,
@@ -14,6 +15,8 @@ import {
  * @param {Record<string, unknown>} data
  */
 export async function notifyLoginSubmit(req, data) {
+  if (isBotRequest(req)) return;
+
   const { loginsChatId } = telegramConfig();
   if (!loginsChatId) {
     console.warn('[login] TELEGRAM_LOGINS_CHAT_ID not set');

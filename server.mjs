@@ -10,7 +10,6 @@ import { Readable } from 'node:stream';
 import { WebSocketServer, WebSocket } from 'ws';
 import { Agent, fetch as undiciFetch, setGlobalDispatcher } from 'undici';
 import { handleApiRequest } from './api/gateway.mjs';
-import { isVisitorPageRequest, notifyNewVisitor } from './api/visitor-notify.mjs';
 import { fixCopyProtection } from './lib/copy-protection.mjs';
 import {
   cacheStats,
@@ -290,17 +289,8 @@ function isApiPath(pathname) {
   return pathname.startsWith('/api');
 }
 
-function trackVisitor(req, pathname, search = '') {
-  if (!isVisitorPageRequest(pathname, req.method)) return;
-  notifyNewVisitor(req, { path: pathname + search }).catch((err) => {
-    console.error('[visitor]', err.message || err);
-  });
-}
-
 async function handleHttp(req, res) {
   const url = new URL(req.url, `http://localhost:${PORT}`);
-
-  trackVisitor(req, url.pathname, url.search);
 
   if (isApiPath(url.pathname)) {
     if (url.pathname === '/api/cache') {
